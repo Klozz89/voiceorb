@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KI Voice Orb - Mockup</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a3a 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            min-height: calc(100vh - 40px);
+            text-align: center;
+        }
+
+        .header {
+            padding: 20px 0;
+            flex-shrink: 0;
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: 300;
+            margin-bottom: 8px;
+            background: linear-gradient(45deg, #4facfe, #00f2fe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 15px;
+        }
+
+        .modi-btn {
+            background: rgba(79, 172, 254, 0.2);
+            border: 2px solid rgba(79, 172, 254, 0.5);
+            color: white;
+            border-radius: 20px;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            margin: 0 auto;
+            display: inline-block;
+            box-shadow: 0 2px 10px rgba(79, 172, 254, 0.3);
+        }
+
+        .modi-btn:hover {
+            background: rgba(79, 172, 254, 0.4);
+            border-color: #4facfe;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.5);
+        }
+
+        .orb-section {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 350px;
+            position: relative;
+        }
+
+        .orb-container {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .orb {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            position: relative;
+            transition: all 0.3s ease;
+            background: radial-gradient(circle at 30% 30%, #4facfe 0%, #00f2fe 50%, #667eea 100%);
+            box-shadow: 
+                0 0 50px rgba(79, 172, 254, 0.6),
+                inset 0 0 25px rgba(255, 255, 255, 0.1);
+            animation: idle-float 4s ease-in-out infinite;
+        }
+
+        .orb::before {
+            content: '';
+            position: absolute;
+            top: 10%;
+            left: 15%;
+            width: 50px;
+            height: 50px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(12px);
+        }
+
+        /* Wellenform-Display */
+        .waveform {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            overflow: hidden;
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .waveform.active {
+            opacity: 1;
+        }
+
+        .wave-bar {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 2px;
+            transform-origin: center;
+            width: 2px;
+            transition: all 0.1s ease;
+        }
+
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            opacity: 0;
+        }
+
+        .wave-rings {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+
+        .wave-ring {
+            position: absolute;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: wave-expand 2s ease-out infinite;
+        }
+
+        .controls-section {
+            flex-shrink: 0;
+            padding: 30px 0;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .btn {
+            padding: 16px 20px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            min-height: 55px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn.recording {
+            background: rgba(255, 107, 157, 0.3);
+            border-color: #ff6b9d;
+            animation: pulse-button 1s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulse-button {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.02); }
+        }
+
+        .manual-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .manual-btn {
+            padding: 10px 16px;
+            font-size: 12px;
+            min-height: auto;
+            opacity: 0.7;
+        }
+
+        .status {
+            font-size: 18px;
+            font-weight: 300;
+            color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .volume-indicator {
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: none;
+            align-items: center;
+            gap: 8px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 13px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 8px 12px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .volume-bars {
+            display: flex;
+            gap: 3px;
+            align-items: end;
+        }
+
+        .volume-bar {
+            width: 4px;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 2px;
+            transition: all 0.1s ease;
+        }
+
+        .volume-bar.active {
+            background: #4facfe;
+        }
+
+        .conversation-log {
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            padding: 15px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .conversation-entry {
+            margin-bottom: 10px;
+            padding: 8px;
+            border-radius: 8px;
+        }
+
+        .user-entry {
+            background: rgba(79, 172, 254, 0.2);
+            border-left: 3px solid #4facfe;
+        }
+
+        .assistant-entry {
+            background: rgba(142, 68, 173, 0.2);
+            border-left: 3px solid #8e44ad;
+        }
+
+        .error-message {
+            background: rgba(255, 107, 107, 0.2);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            border-radius: 10px;
+            padding: 12px;
+            margin-top: 10px;
+            font-size: 13px;
+            color: #ffb3b3;
+        }
+
+        /* Settings Modal */
+        .settings-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: none;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .settings-modal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, rgba(15, 15, 35, 0.95) 0%, rgba(26, 26, 58, 0.95) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 350px;
+            width: 90%;
+            color: white;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .settings-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+            background: linear-gradient(45deg, #4facfe, #00f2fe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+
+        .setting-label {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .setting-description {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 2px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 26px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch.active {
+            background: #4facfe;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(24px);
+        }
+
+        .settings-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 24px;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .settings-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        /* Zustand: Idle */
+        @keyframes idle-float {
+            0%, 100% { 
+                transform: translateY(0) scale(1); 
+                filter: brightness(1);
+                box-shadow: 0 0 50px rgba(79, 172, 254, 0.6), inset 0 0 25px rgba(255, 255, 255, 0.1);
+            }
+            25% { 
+                transform: translateY(-8px) scale(1.03); 
+                filter: brightness(1.1);
+                box-shadow: 0 0 70px rgba(79, 172, 254, 0.8), inset 0 0 30px rgba(255, 255, 255, 0.15);
+            }
+            50% { 
+                transform: translateY(-15px) scale(1.05); 
+                filter: brightness(1.15);
+                box-shadow: 0 0 80px rgba(79, 172, 254, 0.9), inset 0 0 35px rgba(255, 255, 255, 0.2);
+            }
+            75% { 
+                transform: translateY(-8px) scale(1.03); 
+                filter: brightness(1.1);
+                box-shadow: 0 0 70px rgba(79, 172, 254, 0.8), inset 0 0 30px rgba(255, 255, 255, 0.15);
+            }
+        }
+
+        /* Zustand: Zuhören */
+        .orb.listening {
+            background: radial-gradient(circle at 30% 30%, #00d4ff 0%, #4facfe 50%, #0099cc 100%);
+            box-shadow: 
+                0 0 80px rgba(0, 212, 255, 0.8),
+                inset 0 0 30px rgba(255, 255, 255, 0.15);
+            animation: listening-pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes listening-pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.9; }
+        }
+
+        @keyframes wave-expand {
+            0% {
+                width: 0;
+                height: 0;
+                opacity: 1;
+            }
+            100% {
+                width: 300px;
+                height: 300px;
+                opacity: 0;
+            }
+        }
+
+        /* Zustand: Verarbeiten */
+        .orb.processing {
+            background: radial-gradient(circle at 30% 30%, #ff6b6b 0%, #4ecdc4 50%, #45b7d1 100%);
+            box-shadow: 
+                0 0 100px rgba(78, 205, 196, 0.8),
+                inset 0 0 30px rgba(255, 255, 255, 0.2);
+            animation: processing-rotate 3s linear infinite;
+        }
+
+        @keyframes processing-rotate {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.03); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        .orb.processing .particle {
+            animation: particle-float 2s ease-in-out infinite;
+        }
+
+        @keyframes particle-float {
+            0% {
+                opacity: 0;
+                transform: translate(0, 0) scale(0);
+            }
+            20% {
+                opacity: 1;
+                transform: translate(10px, -20px) scale(1);
+            }
+            80% {
+                opacity: 1;
+                transform: translate(-15px, -40px) scale(1.2);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(20px, -60px) scale(0);
+            }
+        }
+
+        /* Zustand: Sprechen */
+        .orb.speaking {
+            background: radial-gradient(circle at 30% 30%, #ff6b9d 0%, #c44569 50%, #8e44ad 100%);
+            box-shadow: 
+                0 0 120px rgba(255, 107, 157, 0.9),
+                inset 0 0 30px rgba(255, 255, 255, 0.25);
+            animation: speaking-intense 0.8s ease-in-out infinite;
+        }
+
+        @keyframes speaking-intense {
+            0%, 100% { 
+                transform: scale(1); 
+                filter: brightness(1);
+            }
+            25% { 
+                transform: scale(1.08); 
+                filter: brightness(1.2);
+            }
+            75% { 
+                transform: scale(0.98); 
+                filter: brightness(0.9);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">KI Voice Orb</h1>
+            <p class="subtitle">Interaktiver Sprachassistent</p>
+            <button class="modi-btn" onclick="openSettings()">⚙️ Modi</button>
+        </div>
+        
+        <div class="orb-section">
+            <div class="orb-container">
+                <div class="orb" id="orb">
+                    <div class="waveform" id="waveform"></div>
+                    <div class="particles" id="particles"></div>
+                    <div class="wave-rings" id="waveRings"></div>
+                </div>
+                <div class="volume-indicator" id="volumeIndicator">
+                    <span>Lautstärke:</span>
+                    <div class="volume-bars">
+                        <div class="volume-bar" style="height: 10px;"></div>
+                        <div class="volume-bar" style="height: 15px;"></div>
+                        <div class="volume-bar" style="height: 25px;"></div>
+                        <div class="volume-bar" style="height: 20px;"></div>
+                        <div class="volume-bar" style="height: 30px;"></div>
+                        <div class="volume-bar" style="height: 18px;"></div>
+                        <div class="volume-bar" style="height: 12px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls-section">
+            <div class="controls">
+                <button class="btn" id="voiceBtn" onclick="toggleVoiceInteraction()">
+                    🎤 Sprachinteraktion starten
+                </button>
+            </div>
+
+            <div class="manual-controls">
+                <button class="manual-btn" onclick="setState('idle')">🔵 Idle</button>
+                <button class="manual-btn" onclick="setState('listening')">🌊 Zuhören</button>
+                <button class="manual-btn" onclick="setState('processing')">⚡ Verarbeiten</button>
+                <button class="manual-btn" onclick="setState('speaking')">💜 Sprechen</button>
+            </div>
+
+            <div class="status" id="status">Bereit für Sprachinteraktion</div>
+            
+            <div id="errorMessage" class="error-message" style="display: none;"></div>
+            
+            <div class="conversation-log" id="conversationLog" style="display: none;">
+                <div style="font-weight: bold; margin-bottom: 10px; color: #4facfe;">Gesprächsverlauf:</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="settings-overlay" id="settingsOverlay" onclick="closeSettings()">
+        <div class="settings-modal" onclick="event.stopPropagation()">
+            <button class="settings-close" onclick="closeSettings()">×</button>
+            <div class="settings-title">⚙️ Visuelle Modi</div>
+            
+            <div class="setting-item">
+                <div>
+                    <div class="setting-label">📊 Mikrofonpegel</div>
+                    <div class="setting-description">Orb reagiert auf Audiolautstärke</div>
+                </div>
+                <div class="toggle-switch" id="micLevelToggle" onclick="toggleSetting('micLevel')">
+                    <div class="toggle-slider"></div>
+                </div>
+            </div>
+
+            <div class="setting-item">
+                <div>
+                    <div class="setting-label">🌊 Wellenform</div>
+                    <div class="setting-description">Live Audiowellen-Display</div>
+                </div>
+                <div class="toggle-switch" id="waveformToggle" onclick="toggleSetting('waveform')">
+                    <div class="toggle-slider"></div>
+                </div>
+            </div>
+
+            <div class="setting-item">
+                <div>
+                    <div class="setting-label">✨ Partikel-Reaktivität</div>
+                    <div class="setting-description">Schwebende Partikel bei Aktivität</div>
+                </div>
+                <div class="toggle-switch" id="reactiveParticlesToggle" onclick="toggleSetting('reactiveParticles')">
+                    <div class="toggle-slider"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const orb = document.getElementById('orb');
+        const status = document.getElementById('status');
+        const particles = document.getElementById('particles');
+        const waveRings = document.getElementById('waveRings');
+        const waveform = document.getElementById('waveform');
+        const volumeIndicator = document.getElementById('volumeIndicator');
+        const volumeBars = document.querySelectorAll('.volume-bar');
+        const voiceBtn = document.getElementById('voiceBtn');
+        const conversationLog = document.getElementById('conversationLog');
+        const errorMessage = document.getElementById('errorMessage');
+        const settingsOverlay = document.getElementById('settingsOverlay');
+
+        let currentState = 'idle';
+        let animationInterval;
+        let waveInterval;
+        let volumeInterval;
+        let recognition;
+        let synthesis = window.speechSynthesis;
+        let isListening = false;
+        let conversationHistory = [];
+
+        // Effekt-Settings
+        let effectSettings = {
+            micLevel: false,
+            waveform: false,
+            reactiveParticles: false // Umbenannt für Klarheit
+        };
+
+        let effectIntervals = new Map();
+        let particleSystem = {
+            active: false,
+            particles: [],
+            animationFrame: null
+        };
+
+        // Settings Modal
+        function openSettings() {
+            settingsOverlay.style.display = 'block';
+        }
+
+        function closeSettings() {
+            settingsOverlay.style.display = 'none';
+        }
+
+        function toggleSetting(settingName) {
+            effectSettings[settingName] = !effectSettings[settingName];
+            const toggle = document.getElementById(settingName + 'Toggle');
+            
+            if (!toggle) {
+                console.error('Toggle element not found:', settingName + 'Toggle');
+                return;
+            }
+            
+            if (effectSettings[settingName]) {
+                toggle.classList.add('active');
+                activateEffect(settingName);
+            } else {
+                toggle.classList.remove('active');
+                deactivateEffect(settingName);
+            }
+        }
+
+        // Effekt-Funktionen
+        function activateEffect(effectName) {
+            switch(effectName) {
+                case 'micLevel':
+                    startMicLevelVisualization();
+                    break;
+                case 'waveform':
+                    startWaveformVisualization();
+                    break;
+                case 'particles':
+                    startParticleReactivity();
+                    break;
+            }
+        }
+
+        function deactivateEffect(effectName) {
+            if (effectIntervals.has(effectName)) {
+                clearInterval(effectIntervals.get(effectName));
+                effectIntervals.delete(effectName);
+            }
+
+            switch(effectName) {
+                case 'micLevel':
+                    resetMicLevelVisualization();
+                    break;
+                case 'waveform':
+                    if (waveform) {
+                        waveform.classList.remove('active');
+                        waveform.innerHTML = '';
+                    }
+                    break;
+                case 'particles':
+                    // Partikel-Intervall wird durch effectIntervals verwaltet
+                    break;
+            }
+        }
+
+        // 1. Mikrofonpegel-Visualisierung
+        function startMicLevelVisualization() {
+            // Simuliere Mikrofonpegel während der Sprachinteraktion
+            const interval = setInterval(() => {
+                if (currentState === 'listening' || currentState === 'speaking') {
+                    const level = Math.random() * 0.8 + 0.2;
+                    updateMicLevel(level);
+                } else if (currentState === 'processing') {
+                    const level = Math.random() * 0.4 + 0.1;
+                    updateMicLevel(level);
+                }
+            }, 100);
+            effectIntervals.set('micLevel', interval);
+        }
+
+        function updateMicLevel(level) {
+            if (!effectSettings.micLevel) return;
+            
+            const scale = 1 + (level * 0.2);
+            const brightness = 1 + (level * 0.3);
+            const glowSize = 50 + (level * 30);
+            const glowOpacity = 0.6 + (level * 0.3);
+            
+            orb.style.transform = `scale(${scale})`;
+            orb.style.filter = `brightness(${brightness})`;
+            
+            // Behalte bestehende Box-Shadow Farben für verschiedene Zustände bei
+            let glowColor = 'rgba(79, 172, 254, ' + glowOpacity + ')';
+            if (currentState === 'listening') {
+                glowColor = 'rgba(0, 212, 255, ' + glowOpacity + ')';
+            } else if (currentState === 'processing') {
+                glowColor = 'rgba(78, 205, 196, ' + glowOpacity + ')';
+            } else if (currentState === 'speaking') {
+                glowColor = 'rgba(255, 107, 157, ' + glowOpacity + ')';
+            }
+            
+            orb.style.boxShadow = `0 0 ${glowSize}px ${glowColor}, inset 0 0 25px rgba(255, 255, 255, 0.1)`;
+        }
+
+        function resetMicLevelVisualization() {
+            orb.style.transform = '';
+            orb.style.filter = '';
+            orb.style.boxShadow = '';
+        }
+
+        // 2. Wellenform-Display
+        function startWaveformVisualization() {
+            waveform.classList.add('active');
+            createWaveformBars();
+            
+            const interval = setInterval(() => {
+                if (currentState === 'listening' || currentState === 'speaking') {
+                    updateWaveformBars();
+                }
+            }, 150);
+            effectIntervals.set('waveform', interval);
+        }
+
+        function createWaveformBars() {
+            waveform.innerHTML = '';
+            const bars = 16; // Weniger Balken für Mundform
+            
+            for (let i = 0; i < bars; i++) {
+                const bar = document.createElement('div');
+                bar.className = 'wave-bar';
+                
+                // Mundform - 10% kleiner und etwas höher
+                const progress = i / (bars - 1); // 0 bis 1
+                
+                // Reduzierter Winkelbereich für natürlicheren Mund
+                const startAngle = Math.PI * 0.25; // 45°
+                const endAngle = Math.PI * 0.75;   // 135°
+                const angle = startAngle + (endAngle - startAngle) * progress;
+                
+                const radius = 76; // 10% kleiner (war 85px)
+                
+                // Position für Mundform
+                const x = Math.cos(angle) * radius;
+                const y = Math.sin(angle) * radius * 0.5; // Flach halten
+                
+                // Position noch etwas höher
+                const offsetY = 10; // Nochmal 5px höher (war 15px)
+                
+                bar.style.left = `calc(50% + ${x}px)`;
+                bar.style.top = `calc(50% + ${offsetY + y}px)`;
+                
+                // Sanftere Rotation für natürlicheren Look
+                const rotationAngle = (progress - 0.5) * 40; // -20° bis +20°
+                bar.style.transform = `translate(-50%, -50%) rotate(${rotationAngle}deg)`;
+                bar.style.height = '6px';
+                bar.style.width = '2px';
+                
+                waveform.appendChild(bar);
+            }
+        }
+
+        function updateWaveformBars() {
+            if (!effectSettings.waveform) return;
+            
+            const bars = waveform.children;
+            for (let i = 0; i < bars.length; i++) {
+                // Mundform: Mittlere Balken sind höher (Sprechen)
+                const progress = i / (bars.length - 1);
+                const centerFactor = 1 - Math.abs(progress - 0.5) * 2; // 0 an Rändern, 1 in Mitte
+                
+                const baseHeight = 6;
+                const variableHeight = Math.random() * 12 + 4;
+                const height = baseHeight + (variableHeight * centerFactor);
+                
+                const opacity = 0.4 + (height / 22) * 0.6;
+                bars[i].style.height = height + 'px';
+                bars[i].style.opacity = opacity;
+            }
+        }
+
+        // 3. Partikel-Reaktivität (Enhanced)
+        function startParticleReactivity() {
+            if (!particles) {
+                console.error('Particles container not found');
+                return;
+            }
+            
+            const interval = setInterval(() => {
+                if (currentState === 'processing' || currentState === 'listening') {
+                    createReactiveParticles();
+                }
+            }, 800);
+            effectIntervals.set('particles', interval);
+        }
+
+        function createReactiveParticles() {
+            if (!effectSettings.particles || !particles) return;
+            
+            // Erweiterte Partikel-Erstellung basierend auf Zustand
+            const particleCount = currentState === 'processing' ? 
+                Math.floor(Math.random() * 4) + 2 : 
+                Math.floor(Math.random() * 2) + 1;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 2 + 's';
+                particle.style.animation = 'particle-float 3s ease-out forwards';
+                particles.appendChild(particle);
+                
+                // Automatisches Entfernen mit Fehlerbehandlung
+                setTimeout(() => {
+                    try {
+                        if (particle && particle.parentNode === particles) {
+                            particles.removeChild(particle);
+                        }
+                    } catch (error) {
+                        console.log('Partikel bereits entfernt');
+                    }
+                }, 3000);
+            }
+        }
+
+        // Partikel erstellen
+        function createParticles() {
+            particles.innerHTML = '';
+            for (let i = 0; i < 12; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 2 + 's';
+                particles.appendChild(particle);
+            }
+        }
+
+        // Wellenringe erstellen
+        function createWaveRing() {
+            const ring = document.createElement('div');
+            ring.className = 'wave-ring';
+            ring.style.top = '50%';
+            ring.style.left = '50%';
+            ring.style.transform = 'translate(-50%, -50%)';
+            waveRings.appendChild(ring);
+            
+            setTimeout(() => {
+                if (waveRings.contains(ring)) {
+                    waveRings.removeChild(ring);
+                }
+            }, 2000);
+        }
+
+        // Lautstärke-Animation
+        function animateVolume() {
+            volumeBars.forEach((bar, index) => {
+                const isActive = Math.random() > 0.3;
+                bar.classList.toggle('active', isActive);
+                if (isActive) {
+                    bar.style.height = (Math.random() * 25 + 10) + 'px';
+                }
+            });
+        }
+
+        function setState(state) {
+            // Alle Animationen stoppen
+            clearInterval(animationInterval);
+            clearInterval(waveInterval);
+            clearInterval(volumeInterval);
+            
+            // Orb-Klassen zurücksetzen
+            orb.className = 'orb';
+            volumeIndicator.style.display = 'none';
+            
+            currentState = state;
+
+            switch(state) {
+                case 'idle':
+                    if (!isListening) {
+                        status.textContent = 'Bereit für Sprachinteraktion';
+                    }
+                    orb.classList.add('idle');
+                    // Effekte nur zurücksetzen wenn sie aktiv sind
+                    if (effectSettings.micLevel) {
+                        resetMicLevelVisualization();
+                    }
+                    break;
+                    
+                case 'listening':
+                    orb.classList.add('listening');
+                    waveInterval = setInterval(createWaveRing, 800);
+                    // Effekte aktivieren wenn eingeschaltet
+                    if (effectSettings.micLevel) {
+                        startMicLevelVisualization();
+                    }
+                    break;
+                    
+                case 'processing':
+                    orb.classList.add('processing');
+                    createParticles();
+                    break;
+                    
+                case 'speaking':
+                    orb.classList.add('speaking');
+                    waveInterval = setInterval(createWaveRing, 400);
+                    break;
+            }
+        }
+
+        // Spracherkennung initialisieren
+        function initSpeechRecognition() {
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                recognition = new SpeechRecognition();
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                recognition.lang = 'de-DE';
+
+                recognition.onstart = function() {
+                    setState('listening');
+                    status.textContent = 'Ich höre zu...';
+                    voiceBtn.textContent = '🛑 Stoppen';
+                    voiceBtn.classList.add('recording');
+                };
+
+                recognition.onresult = function(event) {
+                    const transcript = event.results[0][0].transcript;
+                    addToConversation('user', transcript);
+                    processUserInput(transcript);
+                };
+
+                recognition.onerror = function(event) {
+                    let errorMsg = 'Spracherkennungsfehler: ';
+                    switch(event.error) {
+                        case 'not-allowed':
+                            errorMsg = 'Mikrofonzugriff verweigert. Bitte erlauben Sie den Mikrofonzugriff in Ihren Browser-Einstellungen.';
+                            break;
+                        case 'no-speech':
+                            errorMsg = 'Keine Sprache erkannt. Versuchen Sie es erneut.';
+                            break;
+                        case 'audio-capture':
+                            errorMsg = 'Mikrofonproblem. Überprüfen Sie Ihr Mikrofon.';
+                            break;
+                        case 'network':
+                            errorMsg = 'Netzwerkfehler bei der Spracherkennung.';
+                            break;
+                        default:
+                            errorMsg += event.error;
+                    }
+                    showError(errorMsg);
+                    resetVoiceButton();
+                    setState('idle');
+                };
+
+                recognition.onend = function() {
+                    if (isListening) {
+                        resetVoiceButton();
+                        if (currentState === 'listening') {
+                            setState('idle');
+                        }
+                    }
+                };
+
+                return true;
+            } else {
+                showError('Spracherkennung wird von diesem Browser nicht unterstützt.');
+                return false;
+            }
+        }
+
+        // Mikrofonberechtigung anfordern
+        async function requestMicrophonePermission() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                // Sofort wieder stoppen, wir brauchen nur die Berechtigung
+                stream.getTracks().forEach(track => track.stop());
+                return true;
+            } catch (error) {
+                console.error('Mikrofonberechtigung verweigert:', error);
+                showError('Mikrofonzugriff ist erforderlich für die Sprachinteraktion. Bitte erlauben Sie den Zugriff und laden Sie die Seite neu.');
+                return false;
+            }
+        }
+
+        // Claude API Anfrage
+        async function askClaude(userMessage) {
+            try {
+                setState('processing');
+                status.textContent = 'Denke nach...';
+
+                // Konversationshistorie für Claude vorbereiten
+                const messages = conversationHistory.map(entry => ({
+                    role: entry.type === 'user' ? 'user' : 'assistant',
+                    content: entry.message
+                }));
+
+                const response = await fetch("https://api.anthropic.com/v1/messages", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        model: "claude-sonnet-4-20250514",
+                        max_tokens: 1000,
+                        messages: messages
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API Fehler: ${response.status}`);
+                }
+
+                const data = await response.json();
+                const claudeResponse = data.content[0].text;
+                
+                addToConversation('assistant', claudeResponse);
+                speakResponse(claudeResponse);
+                
+            } catch (error) {
+                console.error('Claude API Fehler:', error);
+                const errorResponse = 'Entschuldigung, ich hatte ein technisches Problem. Können Sie das bitte wiederholen?';
+                addToConversation('assistant', errorResponse);
+                speakResponse(errorResponse);
+            }
+        }
+
+        // Antwort sprechen
+        function speakResponse(text) {
+            setState('speaking');
+            status.textContent = 'Ich spreche...';
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'de-DE';
+            utterance.rate = 0.9;
+            utterance.pitch = 1.0;
+
+            utterance.onstart = function() {
+                setState('speaking');
+            };
+
+            utterance.onend = function() {
+                setState('idle');
+                status.textContent = 'Bereit für Sprachinteraktion';
+                // Automatisch wieder zuhören nach der Antwort
+                setTimeout(() => {
+                    if (!isListening) {
+                        startListening();
+                    }
+                }, 1000);
+            };
+
+            utterance.onerror = function(event) {
+                showError('Sprachausgabefehler: ' + event.error);
+                setState('idle');
+                status.textContent = 'Bereit für Sprachinteraktion';
+            };
+
+            synthesis.speak(utterance);
+        }
+
+        // Benutzereingabe verarbeiten
+        function processUserInput(input) {
+            status.textContent = 'Verarbeite Anfrage...';
+            askClaude(input);
+        }
+
+        // Zur Konversation hinzufügen
+        function addToConversation(type, message) {
+            conversationHistory.push({ type, message });
+            
+            const entry = document.createElement('div');
+            entry.className = `conversation-entry ${type}-entry`;
+            entry.innerHTML = `<strong>${type === 'user' ? 'Sie' : 'KI'}:</strong> ${message}`;
+            
+            conversationLog.appendChild(entry);
+            conversationLog.style.display = 'block';
+            conversationLog.scrollTop = conversationLog.scrollHeight;
+
+            // Maximal 10 Einträge im Log behalten
+            if (conversationLog.children.length > 11) { // +1 für den Header
+                conversationLog.removeChild(conversationLog.children[1]);
+            }
+        }
+
+        // Sprachinteraktion starten/stoppen
+        async function toggleVoiceInteraction() {
+            if (isListening) {
+                stopListening();
+            } else {
+                // Erst Mikrofonberechtigung prüfen
+                const hasPermission = await requestMicrophonePermission();
+                if (hasPermission) {
+                    startListening();
+                }
+            }
+        }
+
+        function startListening() {
+            if (!recognition) {
+                if (!initSpeechRecognition()) return;
+            }
+
+            isListening = true;
+            try {
+                recognition.start();
+            } catch (error) {
+                console.error('Fehler beim Starten der Spracherkennung:', error);
+                showError('Fehler beim Starten der Spracherkennung. Versuchen Sie es erneut.');
+                resetVoiceButton();
+            }
+        }
+
+        function stopListening() {
+            isListening = false;
+            if (recognition) {
+                recognition.stop();
+            }
+            resetVoiceButton();
+            setState('idle');
+        }
+
+        function resetVoiceButton() {
+            voiceBtn.textContent = '🎤 Sprachinteraktion starten';
+            voiceBtn.classList.remove('recording');
+            isListening = false;
+        }
+
+        // Fehler anzeigen
+        function showError(message) {
+            errorMessage.innerHTML = `
+                <strong>⚠️ ${message}</strong>
+                ${message.includes('Mikrofonzugriff') ? 
+                    '<br><small>💡 Tipp: Klicken Sie auf das Schloss-Symbol in der Adressleiste und erlauben Sie den Mikrofonzugriff.</small>' : 
+                    ''
+                }
+            `;
+            errorMessage.style.display = 'block';
+            setTimeout(() => {
+                errorMessage.style.display = 'none';
+            }, 8000);
+        }
+
+        // Initialisierung
+        createParticles();
+        initSpeechRecognition();
+        
+        // Begrüßung beim Laden
+        setTimeout(() => {
+            if (synthesis && synthesis.getVoices().length > 0) {
+                const welcomeMessage = "Hallo! Ich bin Ihr KI-Sprachassistent. Klicken Sie auf den Mikrofon-Button und stellen Sie mir eine Frage.";
+                addToConversation('assistant', welcomeMessage);
+            }
+        }, 1000);
+
+        // Keyboard-Shortcuts für Settings
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeSettings();
+            }
+        });
+
+        // Hover-Effekte für bessere Interaktivität
+        orb.addEventListener('mouseenter', () => {
+            if (currentState === 'idle') {
+                orb.style.transform = 'scale(1.05)';
+                orb.style.boxShadow = '0 0 100px rgba(79, 172, 254, 0.8), inset 0 0 30px rgba(255, 255, 255, 0.2)';
+            }
+        });
+
+        orb.addEventListener('mouseleave', () => {
+            if (currentState === 'idle') {
+                orb.style.transform = '';
+                orb.style.boxShadow = '';
+            }
+        });
+    </script>
+</body>
+</html>
